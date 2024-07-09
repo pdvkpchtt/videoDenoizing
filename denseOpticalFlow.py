@@ -37,7 +37,7 @@ def draw_hsv(flow):
     return bgr
 
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('./granny.mp4')
 
 suc, prev = cap.read()
 prevgray = cv2.cvtColor(prev, cv2.COLOR_BGR2GRAY)
