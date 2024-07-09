@@ -43,7 +43,7 @@ suc, prev = cap.read()
 prevgray = cv2.cvtColor(prev, cv2.COLOR_BGR2GRAY)
 
 
-def draw_mask(flow, img):
+def draw_mask(flow, img, feather_amount=10):
     h, w = flow.shape[:2]
     fx, fy = flow[:,:,0], flow[:,:,1]
 
@@ -61,7 +61,12 @@ def draw_mask(flow, img):
     upper = np.array([255,255,255])
     mask = cv2.inRange(hsv, lower, upper)
 
-    cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    feathered_mask = cv2.GaussianBlur(mask, (feather_amount*2+1, feather_amount*2+1), 0)
+    feathered_mask = feathered_mask[:, :, np.newaxis]
+    # background = np.zeros_like(img, dtype=img.dtype)
+    # feathered_image = img * feathered_mask + background * (1 - feathered_mask)
+    
+    cnts = cv2.findContours(feathered_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
     for c in cnts:
         x,y,w,h = cv2.boundingRect(c)
